@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daisy's Flower Shop | Garden-inspired florals</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Reset & Base Styles */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background: #FCFDFC; 
+      color: #1A1A1A;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; height: auto; object-fit: cover; }
+    
+    /* Layout Container */
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Typography Helpers */
+    .serif { font-family: 'Cormorant Garamond', serif; }
+    .eyebrow { 
+      font-size: 11px; 
+      font-weight: 600; 
+      text-transform: uppercase; 
+      letter-spacing: 2px; 
+      color: #2C5F3E;
+    }
+    
+    /* Fluid Typography */
+    h1 { font-size: clamp(36px, 8vw, 92px); line-height: 1.05; font-weight: 500; }
+    h2 { font-size: clamp(32px, 6vw, 64px); line-height: 1.1; font-weight: 500; }
+    h3 { font-size: clamp(24px, 5vw, 34px); line-height: 1.2; font-weight: 500; }
+
+    /* Floating Daisy Animation */
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+    .floating-daisy {
+      position: absolute;
+      opacity: 0.15;
+      z-index: 0;
+      animation: float 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    /* Fixed Navigation */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; width: 100%;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      height: 80px;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-container {
+      max-width: 1440px; 
+      margin: 0 auto; 
+      padding: 0 24px; 
+      width: 100%;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+    }
+
+    /* Interactive Elements */
+    button, a { transition: all 0.3s ease; }
+    
+    .btn-primary {
+      height: 48px; padding: 0 24px; background: #2C5F3E; color: #FFFFFF;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      font-size: 14px; font-weight: 500; border: none; cursor: pointer;
+      text-decoration: none; border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(44, 95, 62, 0.2);
+      width: 100%;
+    }
+    .btn-primary:hover { background: #1E4229; transform: translateY(-2px); }
+    
+    .btn-secondary {
+      height: 48px; padding: 0 24px; background: transparent; color: #2C5F3E;
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      font-size: 14px; font-weight: 500; border: 1.5px solid #2C5F3E; cursor: pointer;
+      border-radius: 50px; text-decoration: none;
+      width: 100%;
+    }
+    .btn-secondary:hover { background: #2C5F3E; color: #FFFFFF; transform: translateY(-2px); }
+    
+    /* Subscription Buttons */
+    .sub-btn {
+      padding: 12px 20px; border: 1px solid #2C5F3E; background: transparent; 
+      color: #2C5F3E; font-size: 14px; font-weight: 500; cursor: pointer; 
+      transition: all 0.3s; border-radius: 50px; flex: 1;
+    }
+    .sub-btn.active { background: #2C5F3E; color: #FFFFFF; }
+
+    /* Desktop Nav Links */
+    .nav-links { display: none; align-items: center; gap: 32px; }
+    .nav-link { color: #333; font-size: 14px; font-weight: 500; text-decoration: none; position: relative; }
+    .nav-link:hover { color: #2C5F3E; }
+
+    /* Mobile Menu Overlay */
+    .mobile-menu-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+      background: rgba(255,255,255,0.98); backdrop-filter: blur(20px);
+      z-index: 2000; display: flex; flex-direction: column;
+      justify-content: center; align-items: center; gap: 32px;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .mobile-menu-overlay.active { opacity: 1; pointer-events: all; }
+    .mobile-menu-overlay a { font-size: 24px; font-family: 'Cormorant Garamond', serif; color: #1A1A1A; text-decoration: none; font-weight: 600; }
+    .close-btn { position: absolute; top: 24px; right: 24px; background: none; border: none; font-size: 36px; color: #1A1A1A; cursor: pointer; }
+    .mobile-menu-btn { display: block; background: none; border: none; cursor: pointer; padding: 8px; z-index: 2001; }
+
+    /* Grid & Flex Layouts */
+    .section-padding { padding: 64px 24px; }
+    .grid-3, .grid-2 { display: grid; grid-template-columns: 1fr; gap: 32px; }
+    
+    /* Cards */
+    .product-card {
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      border-radius: 12px; background: #FFFFFF; border: 1px solid rgba(0,0,0,0.03);
+      overflow: hidden; display: flex; flex-direction: column;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+    .product-card .img-wrapper { overflow: hidden; height: 300px; width: 100%; position: relative; }
+    .product-card img { transition: transform 0.6s ease; width: 100%; height: 100%; object-fit: cover; }
+    .product-card:hover img { transform: scale(1.05); }
+    .product-content { padding: 24px; display: flex; flex-direction: column; flex: 1; }
+    
+    /* Form Inputs */
+    .input-group { display: flex; flex-direction: column; gap: 8px; }
+    .input-group input, .input-group textarea {
+      background: #FFFFFF; border: 1px solid #E0E0E0; width: 100%;
+      color: #1A1A1A; font-family: 'Inter', sans-serif; font-size: 16px; padding: 16px;
+      outline: none; transition: border-color 0.3s; border-radius: 8px;
+    }
+    .input-group input:focus, .input-group textarea:focus { border-color: #2C5F3E; }
+
+    /* FAQ Auto-Scroll */
+    .faq-scroll-wrapper {
+      height: 350px; overflow-y: scroll; position: relative;
+      scrollbar-width: none; -ms-overflow-style: none;
+      mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+      -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+    }
+    .faq-scroll-wrapper::-webkit-scrollbar { display: none; }
+    .faq-scroll-content { display: flex; flex-direction: column; gap: 0; }
+    .faq-item { border-bottom: 1px solid #EAEAEA; padding: 24px 0; }
+    .faq-item h4 { font-size: 20px; font-weight: 500; color: #1A1A1A; margin-bottom: 8px; }
+    .faq-item p { font-size: 15px; line-height: 1.6; color: #555; }
+
+    /* Back to Top Button */
+    .back-to-top {
+      position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px;
+      background: #2C5F3E; color: #FFFFFF; border-radius: 50%; display: flex;
+      align-items: center; justify-content: center; text-decoration: none;
+      opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 999;
+    }
+    .back-to-top.show { opacity: 1; visibility: visible; }
+    
+    /* Hero Specific */
+    .hero-image-wrapper { width: 100%; height: 400px; border-radius: 100px 100px 16px 16px; overflow: hidden; position: relative; margin-top: 24px; }
+    .hero-image-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+    .about-portrait { width: 100%; height: 400px; border-radius: 16px 100px 16px 100px; overflow: hidden; margin-bottom: 24px; }
+    .about-portrait img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ==================== MEDIA QUERIES (Tablet & Desktop) ==================== */
+    @media (min-width: 768px) {
+      .section-padding { padding: 100px 48px; }
+      .grid-2 { grid-template-columns: repeat(2, 1fr); gap: 48px; }
+      .grid-3 { grid-template-columns: repeat(2, 1fr); }
+      .btn-primary, .btn-secondary { width: auto; }
+      .sub-btn { flex: none; }
+      .hero-image-wrapper { height: 550px; }
+      .about-portrait { height: 550px; }
+      .faq-scroll-wrapper { height: 450px; }
+      .mobile-menu-btn { display: none; }
+      .nav-links { display: flex; }
+    }
+
+    @media (min-width: 1024px) {
+      .section-padding { padding: 120px 88px; }
+      .grid-3 { grid-template-columns: repeat(3, 1fr); }
+      .hero-image-wrapper { height: 650px; margin-top: 0; }
+      .about-portrait { height: 600px; }
+      .flex-row { display: flex; align-items: center; gap: 64px; }
+      .flex-row-reverse { display: flex; flex-direction: row-reverse; align-items: center; gap: 64px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar">
+  <div class="nav-container">
+    
+    <!-- Logo -->
+    <a href="#" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+      <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#2C5F3E" stroke-width="3.5" fill="#FFFFFF" stroke-linejoin="round">
+          <ellipse cx="50" cy="23" rx="11" ry="22" /><ellipse cx="50" cy="23" rx="11" ry="22" transform="rotate(45 50 50)" /><ellipse cx="50" cy="23" rx="11" ry="22" transform="rotate(90 50 50)" /><ellipse cx="50" cy="23" rx="11" ry="22" transform="rotate(135 50 50)" /><ellipse cx="50" cy="23" rx="11" ry="22" transform="rotate(180 50 50)" /><ellipse cx="50" cy="23" rx="11" ry="22" transform="rotate(225 50 50)" /><ellipse cx="50" cy="23" rx="11" ry="22" transform="rotate(270 50 50)" /><ellipse cx="50" cy="23" rx="11" ry="22" transform="rotate(315 50 50)" />
+        </g>
+        <circle cx="50" cy="50" r="19" fill="#F2C94C" stroke="#2C5F3E" stroke-width="3.5" />
+      </svg>
+      <div style="display: flex; flex-direction: column;">
+        <span class="serif" style="color: #1A1A1A; font-size: 26px; font-weight: 600; line-height: 1;">Daisy’s</span>
+        <span style="color: #2C5F3E; font-size: 8px; font-weight: 600; letter-spacing: 2px; margin-top: 2px;">FLOWER SHOP</span>
+      </div>
+    </a>
+
+    <!-- Desktop Menu -->
+    <div class="nav-links">
+      <a href="#story" class="nav-link">My story</a>
+      <a href="#flowers" class="nav-link">Flowers</a>
+      <a href="#weddings" class="nav-link">Weddings</a>
+      <a href="#gallery" class="nav-link">Gallery</a>
+      <a href="#contact" class="btn-primary" style="height: 44px; padding: 0 20px;">Let’s talk flowers</a>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1A1A1A" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu-overlay" id="mobileMenu">
+  <button class="close-btn" onclick="toggleMenu()">&times;</button>
+  <a href="#story" onclick="toggleMenu()">My story</a>
+  <a href="#flowers" onclick="toggleMenu()">Flowers</a>
+  <a href="#weddings" onclick="toggleMenu()">Weddings</a>
+  <a href="#gallery" onclick="toggleMenu()">Gallery</a>
+  <a href="#contact" onclick="toggleMenu()" class="btn-primary" style="width: auto; margin-top: 16px;">Let’s talk flowers</a>
+</div>
+
+<div class="container" style="padding-top: 80px;">
+
+  <!-- ==================== HERO ==================== -->
+  <section class="section-padding" style="background: #FFFFFF;">
+    <div class="flex-row">
+      
+      <!-- Text -->
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 24px;">
+        <div class="eyebrow">Garden-inspired florals · Rizal</div>
+        <h1 class="serif">Flowers for every moment that matters.</h1>
+        <p class="serif" style="font-size: 20px; font-style: italic; color: #666;">Fresh flowers. Thoughtful design. Made with heart.</p>
+        <p style="font-size: 16px; line-height: 1.7; color: #555;">
+          From everyday bouquets to full wedding installations, flowers that feel personal, seasonal and full of life. Every stem chosen with care. Every moment made just for you.
+        </p>
+        <div style="margin-top: 16px;">
+          <a href="#flowers" class="btn-primary">Find your flowers</a>
+        </div>
+      </div>
+
+      <!-- Image -->
+      <div style="flex: 1;" class="hero-image-wrapper">
+        <img src="images/hero-red-roses.jpg" alt="Classic red roses bouquet" />
+      </div>
+    </div>
+
+    <!-- Trust Bar -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; padding: 24px 0; border-top: 1px solid #EAEAEA; border-bottom: 1px solid #EAEAEA; margin-top: 48px;">
+      <div style="display: flex; align-items: center; gap: 8px; justify-content: center; color: #555; font-size: 13px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2C5F3E" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Fresh Daily
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; justify-content: center; color: #555; font-size: 13px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2C5F3E" stroke-width="2"><path d="M1 3h15v13H1z"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> Same-Day Delivery
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; justify-content: center; color: #555; font-size: 13px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2C5F3E" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Locally Grown
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ABOUT ==================== -->
+  <section id="story" class="section-padding" style="background: #FCFDFC;">
+    <div class="flex-row-reverse">
+      <!-- Image -->
+      <div style="flex: 1;">
+        <div class="about-portrait">
+          <img src="images/daisy-portrait.jpg" alt="Florist arranging a bouquet" onerror="this.src='https://images.unsplash.com/photo-1592334319415-574f0d16bc6d?w=600&h=800&fit=crop'" />
+        </div>
+      </div>
+      
+      <!-- Text -->
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+        <div class="eyebrow">01 / A note from Daisy</div>
+        <h2 class="serif">Some things are best said with flowers.</h2>
+        <p style="font-size: 15px; line-height: 1.7; color: #555;">
+          I started Daisy’s Flower Shop because flowers say what words sometimes can’t: I love you. I’m sorry. Congratulations. Thank you.
+        </p>
+        <p style="font-size: 15px; line-height: 1.7; color: #555;">
+          Growing up around gardens, I fell in love with color, texture and natural beauty. What began as arrangements for friends, family and local events became a business rooted in listening and care. A simple gift or a 200-person wedding deserves the same heart.
+        </p>
+        <div style="margin-top: 24px;">
+          <div class="serif" style="font-size: 32px; font-style: italic; color: #2C5F3E;">With love, Daisy</div>
+          <div style="font-size: 11px; font-weight: 600; letter-spacing: 1.5px; color: #777; margin-top: 4px;">OWNER & LEAD FLORIST</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FLOWERS ==================== -->
+  <section id="flowers" class="section-padding" style="background: #FFFFFF;">
+    <div style="margin-bottom: 40px;">
+      <div class="eyebrow">02 / Signature arrangements</div>
+      <h2 class="serif" style="margin-top: 12px;">Little gestures. Lasting feelings.</h2>
+      <p style="font-size: 15px; line-height: 1.7; color: #555; margin-top: 16px; max-width: 600px;">A few favorites to begin with. Each arrangement follows the season, so every one is a little different.</p>
+    </div>
+
+    <div class="grid-3">
+      <!-- Card 1 -->
+      <div class="product-card">
+        <div class="img-wrapper">
+          <img src="images/daisy-classic.jpg" alt="White daisies" />
+        </div>
+        <div class="product-content">
+          <h3 class="serif" style="margin-bottom: 8px;">The Daisy Classic</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: #666; margin-bottom: 16px; flex: 1;">Bright daisies, seasonal blooms and greens. For birthdays and thinking-of-you days.</p>
+          <div style="font-size: 13px; font-weight: 600; color: #2C5F3E; margin-bottom: 12px;">Starting at ₱45</div>
+          <a href="#contact" style="font-size: 13px; color: #2C5F3E; font-weight: 600; text-decoration: underline;">Inquire about this design</a>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="product-card">
+        <div class="img-wrapper">
+          <img src="images/garden-romance.jpg" alt="Pink roses" />
+        </div>
+        <div class="product-content">
+          <h3 class="serif" style="margin-bottom: 8px;">Garden Romance</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: #666; margin-bottom: 16px; flex: 1;">Garden roses, ranunculus and trailing greens, gathered in a keepsake vase.</p>
+          <div style="font-size: 13px; font-weight: 600; color: #2C5F3E; margin-bottom: 12px;">Starting at ₱75</div>
+          <a href="#contact" style="font-size: 13px; color: #2C5F3E; font-weight: 600; text-decoration: underline;">Inquire about this design</a>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="product-card">
+        <div class="img-wrapper">
+          <img src="images/sunshine-box.jpg" alt="Sunflowers" />
+        </div>
+        <div class="product-content">
+          <h3 class="serif" style="margin-bottom: 8px;">Sunshine Box</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: #666; margin-bottom: 16px; flex: 1;">Bold, happy color in a modern flower box. For get-well wishes and congratulations.</p>
+          <div style="font-size: 13px; font-weight: 600; color: #2C5F3E; margin-bottom: 12px;">Starting at ₱65</div>
+          <a href="#contact" style="font-size: 13px; color: #2C5F3E; font-weight: 600; text-decoration: underline;">Inquire about this design</a>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="product-card">
+        <div class="img-wrapper">
+          <img src="images/sympathy-white.jpg" alt="White sympathy arrangement" />
+        </div>
+        <div class="product-content">
+          <h3 class="serif" style="margin-bottom: 8px;">Sympathy & Remembrance</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: #666; margin-bottom: 16px; flex: 1;">Comforting flowers, made with respect. Sympathy bouquets, standing sprays and memorial pieces.</p>
+          <div style="font-size: 13px; font-weight: 600; color: #2C5F3E; margin-bottom: 12px;">Starting at ₱85</div>
+          <a href="#contact" style="font-size: 13px; color: #2C5F3E; font-weight: 600; text-decoration: underline;">Inquire about this design</a>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="product-card">
+        <div class="img-wrapper">
+          <img src="images/birthday-bright.jpg" alt="Colorful birthday bouquet" />
+        </div>
+        <div class="product-content">
+          <h3 class="serif" style="margin-bottom: 8px;">Birthday Bright</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: #666; margin-bottom: 16px; flex: 1;">A colorful celebration in flowers, with custom colors to make their day feel especially theirs.</p>
+          <div style="font-size: 13px; font-weight: 600; color: #2C5F3E; margin-bottom: 12px;">Starting at ₱55</div>
+          <a href="#contact" style="font-size: 13px; color: #2C5F3E; font-weight: 600; text-decoration: underline;">Inquire about this design</a>
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="product-card">
+        <div class="img-wrapper">
+          <img src="images/just-because-gold.jpg" alt="Mixed flowers" />
+        </div>
+        <div class="product-content">
+          <h3 class="serif" style="margin-bottom: 8px;">Just Because</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: #666; margin-bottom: 16px; flex: 1;">A smaller seasonal bouquet for an unexpected gesture. No occasion needed — just a little love.</p>
+          <div style="font-size: 13px; font-weight: 600; color: #2C5F3E; margin-bottom: 12px;">Starting at ₱35</div>
+          <a href="#contact" style="font-size: 13px; color: #2C5F3E; font-weight: 600; text-decoration: underline;">Inquire about this design</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== WEDDINGS ==================== -->
+  <section id="weddings" class="section-padding" style="background: #2C5F3E; color: #FFFFFF;">
+    <div class="flex-row">
+      <div style="flex: 1; height: 400px; border-radius: 12px; overflow: hidden; margin-bottom: 24px;">
+        <img src="images/wedding-bouquet.jpg" alt="Bridal bouquet" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&h=800&fit=crop'" />
+      </div>
+      
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
+        <div class="eyebrow" style="color: #F2C94C;">03 / Weddings & events</div>
+        <h2 class="serif" style="color: #FFFFFF;">Your love story, in full bloom.</h2>
+        <p style="font-size: 15px; line-height: 1.7; color: #D1E0D6;">Your flowers should feel like you. From a quiet exchange of vows to a room full of celebration, we shape the color, texture and feeling around your story.</p>
+        <div style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px; margin-top: 12px;">
+          <h4 class="serif" style="font-size: 22px; margin-bottom: 6px;">Personal flowers</h4>
+          <p style="font-size: 14px; color: #D1E0D6;">Bridal & bridesmaid bouquets; boutonnieres, corsages, petite crowns & hair flowers.</p>
+        </div>
+        <div style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px;">
+          <h4 class="serif" style="font-size: 22px; margin-bottom: 6px;">Ceremony moments</h4>
+          <p style="font-size: 14px; color: #D1E0D6;">Floral arches, aisle decor and hanging installations that frame your vows.</p>
+        </div>
+        <div style="margin-top: 24px;">
+          <a href="#contact" class="btn-secondary" style="border-color: #F2C94C; color: #F2C94C;">Tell us about your day</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PROCESS ==================== -->
+  <section class="section-padding" style="background: #FFFFFF;">
+    <div style="margin-bottom: 40px;">
+      <div class="eyebrow">04 / From vision to vows</div>
+      <h2 class="serif" style="margin-top: 12px;">Beautiful flowers. A calm process.</h2>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 32px;">
+      <div style="border-top: 2px solid #F2C94C; padding-top: 24px;">
+        <div class="serif" style="font-size: 36px; font-style: italic; color: #2C5F3E; margin-bottom: 12px;">01</div>
+        <h4 class="serif" style="font-size: 24px; margin-bottom: 8px;">Inquiry</h4>
+        <p style="font-size: 14px; color: #666;">Your date, venue, vision and budget.</p>
+      </div>
+      <div style="border-top: 2px solid #F2C94C; padding-top: 24px;">
+        <div class="serif" style="font-size: 36px; font-style: italic; color: #2C5F3E; margin-bottom: 12px;">02</div>
+        <h4 class="serif" style="font-size: 24px; margin-bottom: 8px;">Consultation</h4>
+        <p style="font-size: 14px; color: #666;">Colors, style, season and what matters most.</p>
+      </div>
+      <div style="border-top: 2px solid #F2C94C; padding-top: 24px;">
+        <div class="serif" style="font-size: 36px; font-style: italic; color: #2C5F3E; margin-bottom: 12px;">03</div>
+        <h4 class="serif" style="font-size: 24px; margin-bottom: 8px;">Proposal</h4>
+        <p style="font-size: 14px; color: #666;">Detailed designs, flowers and clear pricing.</p>
+      </div>
+      <div style="border-top: 2px solid #F2C94C; padding-top: 24px;">
+        <div class="serif" style="font-size: 36px; font-style: italic; color: #2C5F3E; margin-bottom: 12px;">04</div>
+        <h4 class="serif" style="font-size: 24px; margin-bottom: 8px;">Design & Install</h4>
+        <p style="font-size: 14px; color: #666;">We source, deliver, and set up on your day.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CORPORATE ==================== -->
+  <section class="section-padding" style="background: #FCFDFC;">
+    <div class="flex-row-reverse">
+      <div style="flex: 1; height: 400px; border-radius: 12px; overflow: hidden; margin-bottom: 24px;">
+        <img src="images/sympathy-white.jpg" alt="Corporate flowers" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+      
+      <div style="flex: 1;">
+        <div class="eyebrow">05 / Corporate & wholesale</div>
+        <h2 class="serif" style="margin: 12px 0 20px;">A fresh welcome. Week after week.</h2>
+        <p style="font-size: 15px; line-height: 1.7; color: #555; margin-bottom: 24px;">Flowers change the feeling of a room. We create seasonal flower programs for your space, your brand and your budget.</p>
+        <a href="#contact" class="btn-primary">Create a flower program</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== SUBSCRIPTIONS ==================== -->
+  <section class="section-padding" style="background: #FFFFFF;">
+    <div class="flex-row">
+      <div style="flex: 1; height: 400px; border-radius: 12px; overflow: hidden; margin-bottom: 24px;">
+        <img src="images/just-because-gold.jpg" alt="Mixed flowers" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+      
+      <div style="flex: 1;">
+        <div class="eyebrow">06 / Subscriptions</div>
+        <h2 class="serif" style="margin: 12px 0 20px;">Make room for a little everyday joy.</h2>
+        <p style="font-size: 15px; line-height: 1.7; color: #555; margin-bottom: 24px;">A fresh arrangement to look forward to, for your home or someone you love.</p>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 32px;">
+          <button class="sub-btn active" onclick="selectSub(this)">Weekly</button>
+          <button class="sub-btn" onclick="selectSub(this)">Biweekly</button>
+          <button class="sub-btn" onclick="selectSub(this)">Monthly</button>
+        </div>
+
+        <a href="#contact" class="btn-primary" style="width: 100%;">Arrange a subscription</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TESTIMONIALS ==================== -->
+  <section class="section-padding" style="background: #FCFDFC;">
+    <div style="text-align: center; margin-bottom: 40px;">
+      <div class="eyebrow">07 / Kind Words</div>
+      <h2 class="serif" style="margin-top: 12px;">Loved by our community.</h2>
+    </div>
+    
+    <div class="grid-3">
+      <div style="background: #FFFFFF; padding: 32px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #EAEAEA;">
+        <div style="color: #F2C94C; font-size: 20px; margin-bottom: 12px;">★★★★★</div>
+        <p style="font-size: 15px; line-height: 1.7; color: #555; font-style: italic; margin-bottom: 20px;">"Daisy made our wedding feel like a dream. The flowers were beyond anything I imagined, and she was so calm and kind throughout the whole process."</p>
+        <div style="font-weight: 600; color: #1A1A1A;">Sarah & Mark</div>
+        <div style="font-size: 13px; color: #777;">Wedding Florals</div>
+      </div>
+      <div style="background: #FFFFFF; padding: 32px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #EAEAEA;">
+        <div style="color: #F2C94C; font-size: 20px; margin-bottom: 12px;">★★★★★</div>
+        <p style="font-size: 15px; line-height: 1.7; color: #555; font-style: italic; margin-bottom: 20px;">"I order from Daisy’s Flower Shop every month for my mom. She always gasps when they arrive. The quality is incredible and they last for weeks."</p>
+        <div style="font-weight: 600; color: #1A1A1A;">Rachel T.</div>
+        <div style="font-size: 13px; color: #777;">Monthly Subscription</div>
+      </div>
+      <div style="background: #FFFFFF; padding: 32px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid #EAEAEA;">
+        <div style="color: #F2C94C; font-size: 20px; margin-bottom: 12px;">★★★★★</div>
+        <p style="font-size: 15px; line-height: 1.7; color: #555; font-style: italic; margin-bottom: 20px;">"Our restaurant has used Daisy for weekly flowers for over a year. She keeps it fresh, seasonal, and completely effortless for us."</p>
+        <div style="font-weight: 600; color: #1A1A1A;">The Olive Table</div>
+        <div style="font-size: 13px; color: #777;">Corporate Account</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FAQ ==================== -->
+  <section class="section-padding" style="background: #FFFFFF;">
+    <div style="margin-bottom: 32px;">
+      <div class="eyebrow">08 / Common Questions</div>
+      <h2 class="serif" style="margin-top: 12px;">Before we talk flowers.</h2>
+    </div>
+    
+    <div class="faq-scroll-wrapper" id="faqWrapper">
+      <div class="faq-scroll-content">
+        <div class="faq-item">
+          <h4>Do you deliver?</h4>
+          <p>Yes. Delivery is available by arrangement, with fees based on distance. Email your address so we can check.</p>
+        </div>
+        <div class="faq-item">
+          <h4>How far ahead should I order?</h4>
+          <p>Allow 24–48 hours for everyday flowers. For weddings, we recommend getting in touch 3–6 months in advance.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Can I choose my colors?</h4>
+          <p>Absolutely. Share your colors, style, occasion and budget, and we’ll design something personal with the best seasonal flowers available.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Do you offer workshops?</h4>
+          <p>We offer seasonal workshops for individuals, teams and private groups. Get in touch to ask about upcoming dates.</p>
+        </div>
+        <!-- Duplicate for seamless loop -->
+        <div class="faq-item">
+          <h4>Do you deliver?</h4>
+          <p>Yes. Delivery is available by arrangement, with fees based on distance. Email your address so we can check.</p>
+        </div>
+        <div class="faq-item">
+          <h4>How far ahead should I order?</h4>
+          <p>Allow 24–48 hours for everyday flowers. For weddings, we recommend getting in touch 3–6 months in advance.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Can I choose my colors?</h4>
+          <p>Absolutely. Share your colors, style, occasion and budget, and we’ll design something personal with the best seasonal flowers available.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Do you offer workshops?</h4>
+          <p>We offer seasonal workshops for individuals, teams and private groups. Get in touch to ask about upcoming dates.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== GALLERY ==================== -->
+  <section id="gallery" class="section-padding" style="background: #FCFDFC;">
+    <div style="margin-bottom: 40px;">
+      <div class="eyebrow">09 / A floral journal</div>
+      <h2 class="serif" style="margin-top: 12px;">The many moods of flowers.</h2>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+      <img src="images/hero-red-roses.jpg" alt="Red roses" style="border-radius: 12px; aspect-ratio: 1; object-fit: cover;" />
+      <img src="images/garden-romance.jpg" alt="Pink bouquet" style="border-radius: 12px; aspect-ratio: 1; object-fit: cover;" />
+      <img src="images/sunshine-box.jpg" alt="Sunflowers" style="border-radius: 12px; aspect-ratio: 1; object-fit: cover;" />
+      <img src="images/sympathy-white.jpg" alt="White arrangement" style="border-radius: 12px; aspect-ratio: 1; object-fit: cover;" />
+      <img src="images/birthday-bright.jpg" alt="Colorful bouquet" style="border-radius: 12px; aspect-ratio: 1; object-fit: cover;" />
+      <img src="images/daisy-classic.jpg" alt="White daisies" style="border-radius: 12px; aspect-ratio: 1; object-fit: cover;" />
+      <img src="images/just-because-gold.jpg" alt="Gold vase flowers" style="border-radius: 12px; aspect-ratio: 1; object-fit: cover;" />
+      <img src="images/wedding-bouquet.jpg" alt="Wedding bouquet" style="border-radius: 12px; aspect-ratio: 1; object-fit: cover;" onerror="this.src='https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&h=800&fit=crop'" />
+    </div>
+  </section>
+
+  <!-- ==================== CONTACT ==================== -->
+  <footer id="contact" class="section-padding" style="background: #1E4229; color: #FFFFFF;">
+    <div style="margin-bottom: 48px;">
+      <div class="eyebrow" style="color: #F2C94C;">10 / Let’s make something lovely</div>
+      <h2 class="serif" style="color: #FFFFFF; margin-top: 12px;">Tell me your moment. I’ll bring the flowers.</h2>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 40px;">
+      <!-- Contact Info -->
+      <div>
+        <p style="font-size: 15px; line-height: 1.7; color: #D1E0D6; margin-bottom: 16px;">A bouquet, a wedding, a room to brighten — it starts with a conversation.</p>
+        <a href="mailto:daisymaecastillo.06@gmail.com" class="serif" style="font-size: 24px; color: #FFFFFF; text-decoration: underline; word-break: break-all;">daisymaecastillo.06@gmail.com</a>
+        <div style="font-size: 14px; color: #D1E0D6; margin-top: 8px;">Daisy’s Flower Shop · Rizal</div>
+      </div>
+
+      <!-- Form -->
+      <div>
+        <form style="display: flex; flex-direction: column; gap: 24px;" onsubmit="event.preventDefault(); alert('Thank you! Daisy will be in touch shortly.');">
+          <div class="input-group">
+            <label style="font-size: 12px; color: #D1E0D6;">Your name</label>
+            <input type="text" placeholder="A little introduction" required />
+          </div>
+          <div class="input-group">
+            <label style="font-size: 12px; color: #D1E0D6;">Email address</label>
+            <input type="email" placeholder="Where we can reach you" required />
+          </div>
+          <div class="input-group">
+            <label style="font-size: 12px; color: #D1E0D6;">Your vision</label>
+            <textarea rows="3" placeholder="Colors, flowers, date..."></textarea>
+          </div>
+          <button type="submit" class="btn-secondary" style="background: transparent; border-color: #F2C94C; color: #F2C94C; width: 100%;">Send an inquiry</button>
+        </form>
+      </div>
+    </div>
+
+    <div style="border-top: 1px solid rgba(255,255,255,0.1); margin-top: 48px; padding-top: 24px; text-align: center; font-size: 12px; color: #A0B8A8;">
+      © Daisy’s Flower Shop · Rizal
+    </div>
+  </footer>
+
+</div>
+
+<!-- Back to Top Button -->
+<a href="#" class="back-to-top" id="backToTop" aria-label="Back to top">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 15l-6-6-6 6"/></svg>
+</a>
+
+<script>
+  // Mobile Menu Toggle
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  function toggleMenu() {
+    mobileMenu.classList.toggle('active');
+  }
+  mobileMenuBtn.addEventListener('click', toggleMenu);
+
+  // Back to Top Button
+  const backToTop = document.getElementById('backToTop');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 500) {
+      backToTop.classList.add('show');
+    } else {
+      backToTop.classList.remove('show');
+    }
+  }, { passive: true });
+
+  // Subscription Buttons
+  function selectSub(clickedBtn) {
+    const buttons = document.querySelectorAll('.sub-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    clickedBtn.classList.add('active');
+  }
+
+  // Smart Auto-Scroll FAQ
+  const faqWrapper = document.getElementById('faqWrapper');
+  let isHovered = false;
+  let isUserScrolling = false;
+  let scrollSpeed = 0.6;
+  let userScrollTimeout;
+
+  function autoScrollFAQ() {
+    if (!isHovered && !isUserScrolling) {
+      faqWrapper.scrollTop += scrollSpeed;
+      const halfHeight = faqWrapper.scrollHeight / 2;
+      if (faqWrapper.scrollTop >= halfHeight) {
+        faqWrapper.scrollTop -= halfHeight;
+      }
+    }
+    requestAnimationFrame(autoScrollFAQ);
+  }
+
+  requestAnimationFrame(autoScrollFAQ);
+
+  faqWrapper.addEventListener('mouseenter', () => { isHovered = true; });
+  faqWrapper.addEventListener('mouseleave', () => { isHovered = false; });
+
+  faqWrapper.addEventListener('wheel', () => {
+    isUserScrolling = true;
+    clearTimeout(userScrollTimeout);
+    userScrollTimeout = setTimeout(() => { isUserScrolling = false; }, 2000);
+  });
+
+  faqWrapper.addEventListener('touchstart', () => {
+    isUserScrolling = true;
+    clearTimeout(userScrollTimeout);
+  });
+
+  faqWrapper.addEventListener('touchend', () => {
+    clearTimeout(userScrollTimeout);
+    userScrollTimeout = setTimeout(() => { isUserScrolling = false; }, 2000);
+  });
+</script>
+
+</body>
+</html>
